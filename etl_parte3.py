@@ -19,11 +19,12 @@ kpi_municipio, kpi_genero, kpi_contagios = load_data()
 st.subheader("🏘️ Casos por Municipio")
 st.dataframe(kpi_municipio.sort_values("num_casos", ascending=False))
 fig1, ax1 = plt.subplots()
-ax1.barh(kpi_municipio["name"], kpi_municipio["num_casos"])
+ax1.barh(kpi_municipio["name_municipality"], kpi_municipio["num_casos"])  # ✅ corregido
 ax1.set_xlabel("Número de Casos")
 ax1.set_ylabel("Municipio")
 ax1.invert_yaxis()
 st.pyplot(fig1)
+
 
 # KPI: Casos por Género
 st.subheader("👩‍🦰 Casos por Género")
