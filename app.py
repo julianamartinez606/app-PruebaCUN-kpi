@@ -9,9 +9,33 @@ def load_data():
     municipio = pd.read_csv("kpi_municipio.csv")
     genero = pd.read_csv("kpi_genero.csv")
     contagio = pd.read_csv("kpi_contagios.csv")
-    return municipio, genero, contagio
+    cases= pd.read ("cases.csv")
+    return municipio, genero, contagio, cases
 
-kpi_municipio, kpi_genero, kpi_contagios = load_data()
+kpi_municipio, kpi_genero, kpi_contagios, df_cases = load_data()
+
+# KPIs principales
+total_casos = kpi_contagios["num_casos"].sum()
+total_recuperados = df_cases["date_recovery"].notna().sum()
+total_fallecidos = df_cases["date_death"].notna().sum()
+
+# Cálculo de días promedio de recuperación
+df_cases["date_symptom"] = pd.to_datetime(df_cases["date_symptom"], errors="coerce")
+df_cases["date_recovery"] = pd.to_datetime(df_cases["date_recovery"], errors="coerce")
+df_cases["dias_recuperacion"] = (df_cases["date_recovery"] - df_cases["date_symptom"]).dt.days
+promedio_dias = int(df_cases["dias_recuperacion"].mean(skipna=True))
+
+# Visualización en columnas
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("🦠 Contagios", f"{total_casos:,}")
+col2.metric("💚 Recuperados", f"{total_recuperados:,}")
+col3.metric("🖤 Fallecidos", f"{total_fallecidos:,}")
+col4.metric("🕒 Promedio días recuperación", f"{promedio_dias} días")
+
+
+
+
+
 
 # 📍 KPI: Casos por Municipio
 st.subheader("🏘️ Casos por Municipio")
