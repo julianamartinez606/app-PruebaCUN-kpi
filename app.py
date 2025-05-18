@@ -32,11 +32,6 @@ col2.metric("💚 Recuperados", f"{total_recuperados:,}")
 col3.metric("🖤 Fallecidos", f"{total_fallecidos:,}")
 col4.metric("🕒 Promedio días recuperación", f"{promedio_dias} días")
 
-
-
-
-
-
 # 📍 KPI: Casos por Municipio
 st.subheader("🏘️ Casos por Municipio")
 st.dataframe(kpi_municipio.sort_values("num_casos", ascending=False))
