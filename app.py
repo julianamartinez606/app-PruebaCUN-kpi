@@ -2,10 +2,8 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
-# Título
 st.title("📊 Dashboard COVID - Cundinamarca y Boyacá")
 
-# Cargar los archivos CSV locales (asegúrate de que están en el mismo repo)
 @st.cache_data
 def load_data():
     municipio = pd.read_csv("kpi_municipio.csv")
@@ -42,6 +40,5 @@ ax3.set_ylabel("Número de Casos")
 ax3.set_xticklabels(kpi_contagios["name"], rotation=45)
 st.pyplot(fig3)
 
-# Créditos
 st.markdown("---")
 st.markdown("App creada por **Sarii** para la prueba técnica BI ✨")
