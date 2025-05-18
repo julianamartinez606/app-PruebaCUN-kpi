@@ -1,50 +1,50 @@
 import pandas as pd
-from sqlalchemy import create_engine
+import streamlit as st
+import matplotlib.pyplot as plt
 
-# 🔌 Conexión a MySQL en GCP por socket
-user = 'root'
-password = '1234'
-database = 'covid_db'
-socket_path = '/cloudsql/prueba-cun-460113:us-central1:myinstance'
+# Título
+st.title("📊 Dashboard COVID - Cundinamarca y Boyacá")
 
-# Crear motor de conexión
-engine = create_engine(
-    f'mysql+pymysql://{user}:{password}@localhost/{database}?unix_socket={socket_path}'
-)
+# Cargar los archivos CSV locales (asegúrate de que están en el mismo repo)
+@st.cache_data
+def load_data():
+    municipio = pd.read_csv("kpi_municipio.csv")
+    genero = pd.read_csv("kpi_genero.csv")
+    contagio = pd.read_csv("kpi_contagios.csv")
+    return municipio, genero, contagio
 
-# 📥 Extraer tablas
-tables = {}
-for tbl in ['cases', 'municipality', 'gender', 'type_contagion']:
-    df = pd.read_sql(f'SELECT * FROM {tbl}', con=engine)
-    # Corregir nombres de columnas: quitar espacios, puntos y puntos y coma
-    df.columns = [c.strip().replace(';', '').replace(' ', '_').lower() for c in df.columns]
-    tables[tbl] = df
+kpi_municipio, kpi_genero, kpi_contagios = load_data()
 
-# Renombrar para facilitar
-cases = tables['cases']
-municipality = tables['municipality']
-gender = tables['gender']
-type_contagion = tables['type_contagion']
+# KPI: Casos por Municipio
+st.subheader("🏘️ Casos por Municipio")
+st.dataframe(kpi_municipio.sort_values("num_casos", ascending=False))
+fig1, ax1 = plt.subplots()
+ax1.barh(kpi_municipio["name"], kpi_municipio["num_casos"])
+ax1.set_xlabel("Número de Casos")
+ax1.set_ylabel("Municipio")
+ax1.invert_yaxis()
+st.pyplot(fig1)
 
-# 🔍 Verifica los nombres para asegurar que existen
-print("✅ Columnas en 'cases':", cases.columns.tolist())
+# KPI: Casos por Género
+st.subheader("👩‍🦰 Casos por Género")
+st.dataframe(kpi_genero)
+fig2, ax2 = plt.subplots()
+ax2.pie(kpi_genero["num_casos"], labels=kpi_genero["name"], autopct="%1.1f%%", startangle=90)
+ax2.axis("equal")
+st.pyplot(fig2)
 
-# 📊 KPIs
-kpi_municipio = cases.groupby('id_municipality').size().reset_index(name='num_casos')
-kpi_genero = cases.groupby('id_gender').size().reset_index(name='num_casos')
-kpi_contagios = cases.groupby('id_type').size().reset_index(name='num_casos')
+# KPI: Casos por Tipo de Contagio
+st.subheader("🦠 Casos por Tipo de Contagio")
+st.dataframe(kpi_contagios)
+fig3, ax3 = plt.subplots()
+ax3.bar(kpi_contagios["name"], kpi_contagios["num_casos"])
+ax3.set_ylabel("Número de Casos")
+ax3.set_xticklabels(kpi_contagios["name"], rotation=45)
+st.pyplot(fig3)
 
+# Créditos
+st.markdown("---")
+st.markdown("App creada por **Sarii** para la prueba técnica BI ✨")
 
-# 🧩 Merge para nombres legibles
-kpi_municipio = kpi_municipio.merge(municipality, on='id_municipality', how='left')
-kpi_genero = kpi_genero.merge(gender, on='id_gender', how='left')
-kpi_contagios = kpi_contagios.merge(type_contagion, on='id_type', how='left')
-
-# 💾 Exportar
-kpi_municipio.to_csv('kpi_municipio.csv', index=False)
-kpi_genero.to_csv('kpi_genero.csv', index=False)
-kpi_contagios.to_csv('kpi_contagios.csv', index=False)
-
-print("🎉 ¡Transformaciones y archivos KPI generados con éxito!")
 
 
