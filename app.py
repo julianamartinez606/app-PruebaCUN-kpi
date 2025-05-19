@@ -15,7 +15,7 @@ def load_data():
     return municipio, genero, contagio, resumen
 
 kpi_municipio, kpi_genero, kpi_contagios, kpi_resumen = load_data()
-
+st.write(kpi_resumen)
 # 📌 Indicadores Clave
 st.markdown("### 📌 Indicadores Clave")
 
