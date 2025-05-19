@@ -19,16 +19,16 @@ kpi_municipio, kpi_genero, kpi_contagios, kpi_resumen = load_data()
 # 🔍 Asegurarse de que los indicadores estén en minúscula para evitar errores
 kpi_resumen["indicador"] = kpi_resumen["indicador"].str.lower()
 
-# 📌 Indicadores Clave
-st.markdown("### 📌 Indicadores Clave")
+# 🎯 Indicadores Clave
+st.markdown("### 🎯 Indicadores Clave")
 
 col1, col2 = st.columns(2)
 col3, col4 = st.columns(2)
 
-col1.metric("🟢 Total Contagios", int(kpi_resumen.query("indicador == 'contagios'")["valor"].values[0]))
-col2.metric("🟦 Total Recuperados", int(kpi_resumen.query("indicador == 'recuperados'")["valor"].values[0]))
-col3.metric("🔴 Total Fallecidos", int(kpi_resumen.query("indicador == 'fallecidos'")["valor"].values[0]))
-col4.metric("📈 Promedio días recuperación", f"{kpi_resumen.query(\"indicador == 'promedio días recuperación'\")['valor'].values[0]:.2f} días")
+col1.metric("🦠 Total Contagios", int(kpi_resumen.query("indicador == 'Contagios'")["valor"].values[0]))
+col2.metric("💚 Total Recuperados", int(kpi_resumen.query("indicador == 'Recuperados'")["valor"].values[0]))
+col3.metric("🕯️ Total Fallecidos", int(kpi_resumen.query("indicador == 'Fallecidos'")["valor"].values[0]))
+col4.metric("⏱️ Promedio días recuperación", f"{kpi_resumen.query(\"indicador == 'Promedio días recuperación'\")['valor'].values[0]:.2f} días")
 
 # 🏘️ KPI: Casos por Municipio
 st.subheader("🏘️ Casos por Municipio")
