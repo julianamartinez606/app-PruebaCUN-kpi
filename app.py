@@ -2,24 +2,24 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
-# 📌 Título
+# Título
 st.title("📊 Dashboard COVID - Cundinamarca y Boyacá")
 
-# 📥 Cargar datos
+# Cargar datos
 @st.cache_data
 def load_data():
     municipio = pd.read_csv("kpi_municipio.csv")
     genero = pd.read_csv("kpi_genero.csv")
     contagio = pd.read_csv("kpi_contagios.csv")
     resumen = pd.read_csv("kpi_resumen.csv")
-    
-    # Normalizar nombres de indicadores
-    resumen['indicador'] = resumen['indicador'].str.strip().str.lower()
     return municipio, genero, contagio, resumen
 
 kpi_municipio, kpi_genero, kpi_contagios, kpi_resumen = load_data()
 
-# 🧭 Indicadores Clave
+# 🔍 Asegurarse de que los indicadores estén en minúscula para evitar errores
+kpi_resumen["indicador"] = kpi_resumen["indicador"].str.lower()
+
+# 📌 Indicadores Clave
 st.markdown("### 📌 Indicadores Clave")
 
 col1, col2 = st.columns(2)
@@ -30,7 +30,7 @@ col2.metric("🟦 Total Recuperados", int(kpi_resumen.query("indicador == 'recup
 col3.metric("🔴 Total Fallecidos", int(kpi_resumen.query("indicador == 'fallecidos'")["valor"].values[0]))
 col4.metric("📈 Promedio días recuperación", f"{kpi_resumen.query(\"indicador == 'promedio días recuperación'\")['valor'].values[0]:.2f} días")
 
-# 🏘️ Casos por Municipio
+# 🏘️ KPI: Casos por Municipio
 st.subheader("🏘️ Casos por Municipio")
 st.dataframe(kpi_municipio.sort_values("num_casos", ascending=False))
 fig1, ax1 = plt.subplots()
@@ -40,7 +40,7 @@ ax1.set_ylabel("Municipio")
 ax1.invert_yaxis()
 st.pyplot(fig1)
 
-# 👩‍🦰 Casos por Género
+# 👩‍🦰 KPI: Casos por Género
 st.subheader("👩‍🦰 Casos por Género")
 st.dataframe(kpi_genero)
 fig2, ax2 = plt.subplots()
@@ -48,7 +48,7 @@ ax2.pie(kpi_genero["num_casos"], labels=kpi_genero["name"], autopct="%1.1f%%", s
 ax2.axis("equal")
 st.pyplot(fig2)
 
-# 🦠 Casos por Tipo de Contagio
+# 🦠 KPI: Casos por Tipo de Contagio
 st.subheader("🦠 Casos por Tipo de Contagio")
 st.dataframe(kpi_contagios)
 fig3, ax3 = plt.subplots()
@@ -58,9 +58,8 @@ ax3.set_xticks(range(len(kpi_contagios)))
 ax3.set_xticklabels(kpi_contagios["name"], rotation=45)
 st.pyplot(fig3)
 
-# 👣 Footer
+# Pie de página
 st.markdown("---")
 st.markdown("App creada por **Sarii** para la prueba técnica BI ✨")
-
 
 
